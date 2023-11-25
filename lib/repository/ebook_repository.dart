@@ -7,10 +7,10 @@ class BookApi {
 
   BookApi({required this.baseUrl});
 
-  Future<List> geteBooks() async {
-    final response = await http.get(Uri.parse('$baseUrl/api/books'));
+  Future<List<Ebook>> getEbooks() async {
+    final response = await http.get(Uri.parse('$baseUrl/books.json'));
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body)['books'];
+      final List<dynamic> data = json.decode(response.body);
       return data.map((json) => Ebook.fromJson(json)).toList();
     } else {
       throw Exception('Falha ao carregar livros');
@@ -18,9 +18,9 @@ class BookApi {
   }
 
   Future<Ebook> getBookById(int id) async {
-    final response = await http.get(Uri.parse('$baseUrl/api/books/$id'));
+    final response = await http.get(Uri.parse('$baseUrl/books.json/$id'));
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body)['book'];
+      final Map<String, dynamic> data = json.decode(response.body);
       return Ebook.fromJson(data);
     } else if (response.statusCode == 404) {
       throw Exception('Livro não encontrado');
