@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'pages/home_page.dart';
+import 'repository/ebook_repository.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,16 +10,15 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final bookApi = BookApi(baseUrl: 'https://escribo.com');
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Book API Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: BookListScreen(bookApi: bookApi),
     );
   }
 }
