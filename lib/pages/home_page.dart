@@ -1,47 +1,54 @@
 import 'package:flutter/material.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+import '../model/ebook_model.dart';
+import '../repository/ebook_repository.dart';
+
+class BookListScreen extends StatefulWidget {
+  final BookApi bookApi;
+
+  const BookListScreen({Key? key, required this.bookApi}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  BookListScreenState createState() => BookListScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class BookListScreenState extends State<BookListScreen> {
+  List<Ebook> books = [];
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  @override
+  void initState() {
+    super.initState();
+    fetchBooks();
+  }
+
+  Future<void> fetchBooks() async {
+    try {
+      final fetchedBooks = await widget.bookApi.getEbooks();
+      setState(() {
+        books = fetchedBooks;
+      });
+    } catch (e) {
+      Exception('Error: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: const Text('eBook List'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      body: ListView.builder(
+        itemCount: books.length,
+        itemBuilder: (context, index) {
+          final book = books[index];
+          return ListTile(
+            title: Text(book.title),
+            subtitle: Text(book.author),
+            leading: Image.network(book.coverUrl),
+            onTap: () {},
+          );
+        },
       ),
     );
   }
