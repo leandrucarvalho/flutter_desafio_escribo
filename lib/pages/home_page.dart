@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../model/ebook_model.dart';
+import 'package:flutter_desafio_escribo/controller/ebook_controller.dart';
 import '../repository/ebook_repository.dart';
 
 class BookListScreen extends StatefulWidget {
@@ -13,34 +12,13 @@ class BookListScreen extends StatefulWidget {
 }
 
 class BookListScreenState extends State<BookListScreen> {
-  List<Ebook> books = [];
-  List<Ebook> favoriteBooks = [];
+  late EbookListController _ebookListController;
 
   @override
   void initState() {
     super.initState();
-    fetchBooks();
-  }
-
-  Future<void> fetchBooks() async {
-    try {
-      final fetchedBooks = await widget.bookApi.getEbooks();
-      setState(() {
-        books = fetchedBooks;
-      });
-    } catch (e) {
-      Exception('Error: $e');
-    }
-  }
-
-  void toggleFavorite(Ebook book) {
-    setState(() {
-      if (favoriteBooks.contains(book)) {
-        favoriteBooks.remove(book);
-      } else {
-        favoriteBooks.add(book);
-      }
-    });
+    _ebookListController = EbookListController(widget.bookApi);
+    _ebookListController.fetchBooks();
   }
 
   @override
@@ -67,7 +45,7 @@ class BookListScreenState extends State<BookListScreen> {
                   ),
                   onPressed: () {
                     setState(() {
-                      fetchBooks();
+                      _ebookListController.fetchBooks();
                     });
                   },
                   child: const Text("Livros"),
@@ -85,7 +63,8 @@ class BookListScreenState extends State<BookListScreen> {
                   ),
                   onPressed: () {
                     setState(() {
-                      books = favoriteBooks;
+                      _ebookListController.books =
+                          _ebookListController.favoriteBooks;
                     });
                   },
                   child: const Text("Favoritos"),
@@ -101,10 +80,11 @@ class BookListScreenState extends State<BookListScreen> {
                 childAspectRatio: 0.8,
               ),
               shrinkWrap: true,
-              itemCount: books.length,
+              itemCount: _ebookListController.books.length,
               itemBuilder: (context, index) {
-                final book = books[index];
-                final isFavorite = favoriteBooks.contains(book);
+                final book = _ebookListController.books[index];
+                final isFavorite =
+                    _ebookListController.favoriteBooks.contains(book);
                 return Card(
                   elevation: 5,
                   child: Stack(
@@ -138,7 +118,8 @@ class BookListScreenState extends State<BookListScreen> {
                             isFavorite ? Icons.bookmark : Icons.bookmark_sharp,
                             color: Colors.red,
                           ),
-                          onTap: () => toggleFavorite(book),
+                          onTap: () =>
+                              _ebookListController.toggleFavorite(book),
                         ),
                       ),
                     ],
