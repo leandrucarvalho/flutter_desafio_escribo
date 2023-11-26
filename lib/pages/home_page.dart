@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../model/ebook_model.dart';
 import '../repository/ebook_repository.dart';
-import 'favorite_ebook_page.dart';
 
 class BookListScreen extends StatefulWidget {
   final BookApi bookApi;
@@ -67,7 +66,9 @@ class BookListScreenState extends State<BookListScreen> {
                     ),
                   ),
                   onPressed: () {
-                    // Exibir todos os livros
+                    setState(() {
+                      fetchBooks();
+                    });
                   },
                   child: const Text("Livros"),
                 ),
@@ -83,14 +84,9 @@ class BookListScreenState extends State<BookListScreen> {
                     ),
                   ),
                   onPressed: () {
-                    // Navegar para a tela de Favoritos
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            FavoriteBooksScreen(favoriteBooks),
-                      ),
-                    );
+                    setState(() {
+                      books = favoriteBooks;
+                    });
                   },
                   child: const Text("Favoritos"),
                 ),
@@ -110,11 +106,11 @@ class BookListScreenState extends State<BookListScreen> {
                 final book = books[index];
                 final isFavorite = favoriteBooks.contains(book);
                 return Card(
-                  child: Container(
-                    color: Colors.green,
-                    child: Stack(
-                      children: [
-                        Column(
+                  elevation: 5,
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -125,24 +121,27 @@ class BookListScreenState extends State<BookListScreen> {
                             Text(
                               book.title,
                               maxLines: 1,
+                              textAlign: TextAlign.center,
                             ),
-                            Text(book.author),
+                            Text(
+                              book.author,
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                            ),
                           ],
                         ),
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: GestureDetector(
-                            child: Icon(
-                              isFavorite
-                                  ? Icons.bookmark
-                                  : Icons.bookmark_sharp,
-                              color: Colors.red, // ou a cor desejada
-                            ),
-                            onTap: () => toggleFavorite(book),
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: GestureDetector(
+                          child: Icon(
+                            isFavorite ? Icons.bookmark : Icons.bookmark_sharp,
+                            color: Colors.red,
                           ),
+                          onTap: () => toggleFavorite(book),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 );
               },
