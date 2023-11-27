@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_desafio_escribo/controller/ebook_controller.dart';
-import '../repository/ebook_repository.dart';
+import 'package:flutter_desafio_escribo/di/di_setup.dart';
 
 class BookListScreen extends StatefulWidget {
-  final BookApi bookApi;
-
-  const BookListScreen({Key? key, required this.bookApi}) : super(key: key);
+  const BookListScreen({Key? key}) : super(key: key);
 
   @override
   BookListScreenState createState() => BookListScreenState();
@@ -17,7 +15,7 @@ class BookListScreenState extends State<BookListScreen> {
   @override
   void initState() {
     super.initState();
-    _ebookListController = EbookListController(widget.bookApi);
+    _ebookListController = getIt.get<EbookListController>();
     _ebookListController.fetchBooks();
   }
 

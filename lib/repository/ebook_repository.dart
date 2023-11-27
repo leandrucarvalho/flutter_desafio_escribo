@@ -1,11 +1,11 @@
-import 'package:flutter_desafio_escribo/model/ebook_model.dart';
 import 'dart:convert';
+
+import 'package:flutter_desafio_escribo/model/ebook_model.dart';
 import 'package:http/http.dart' as http;
 
-class BookApi {
-  final String baseUrl;
+class EbookRepository {
 
-  BookApi({required this.baseUrl});
+  static const String baseUrl = 'https://escribo.com';
 
   Future<List<Ebook>> getEbooks() async {
     final response = await http.get(Uri.parse('$baseUrl/books.json'));
