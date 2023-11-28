@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
@@ -11,24 +12,22 @@ class EbookListController {
 
   EbookListController(this._repository);
 
-  List<Ebook> books = [];
-  List<Ebook> favoriteBooks = [];
+  final ValueNotifier<List<Ebook>> books = ValueNotifier([]);
 
   Future<void> fetchBooks() async {
     try {
       final fetchedBooks = await _repository.getEbooks();
-      books.addAll(fetchedBooks);
+
+      books.value = fetchedBooks;
     } catch (e) {
       Exception('Error fetching books: $e');
     }
   }
 
-  void toggleFavorite(Ebook book) {
-    if (favoriteBooks.contains(book)) {
-      favoriteBooks.remove(book);
-    } else {
-      favoriteBooks.add(book);
-    }
+  void toggleFavorite(int id) {
+    books.value.singleWhere((e) => e.id == id).toggleFavorite();
+    final newList = List<Ebook>.from(books.value);
+    books.value = newList;
   }
 
   Future<void> downloadAndSaveBook(Ebook book) async {
@@ -39,13 +38,13 @@ class EbookListController {
         File file = File('${appDocDir.path}/${book.title}.epub');
         await file.writeAsBytes(response.bodyBytes);
 
-        Exception('Livro baixado e salvo com sucesso em: ${file.path}');
+        throw Exception('Livro baixado e salvo com sucesso em: ${file.path}');
       } else {
-        Exception(
+        throw Exception(
             'Erro durante o download do livro. Código de status: ${response.statusCode}');
       }
     } catch (e) {
-      Exception('Erro durante o download do livro: $e');
+      throw Exception('Erro durante o download do livro: $e');
     }
   }
 }

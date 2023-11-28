@@ -1,10 +1,10 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 class Ebook {
   final int id;
   final String title;
   final String author;
   final String coverUrl;
   final String downloadUrl;
+  bool isFavorite;
 
   Ebook({
     required this.id,
@@ -12,7 +12,12 @@ class Ebook {
     required this.author,
     required this.coverUrl,
     required this.downloadUrl,
+    this.isFavorite = false,
   });
+
+  void toggleFavorite() {
+    isFavorite = !isFavorite;
+  }
 
   factory Ebook.fromJson(Map<String, dynamic> json) {
     return Ebook(
@@ -32,7 +37,8 @@ class Ebook {
         other.title == title &&
         other.author == author &&
         other.coverUrl == coverUrl &&
-        other.downloadUrl == downloadUrl;
+        other.downloadUrl == downloadUrl &&
+        other.isFavorite == isFavorite;
   }
 
   @override
@@ -41,6 +47,25 @@ class Ebook {
         title.hashCode ^
         author.hashCode ^
         coverUrl.hashCode ^
-        downloadUrl.hashCode;
+        downloadUrl.hashCode ^
+        isFavorite.hashCode;
+  }
+
+  Ebook copyWith({
+    int? id,
+    String? title,
+    String? author,
+    String? coverUrl,
+    String? downloadUrl,
+    bool? isFavorite,
+  }) {
+    return Ebook(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      author: author ?? this.author,
+      coverUrl: coverUrl ?? this.coverUrl,
+      downloadUrl: downloadUrl ?? this.downloadUrl,
+      isFavorite: isFavorite ?? this.isFavorite,
+    );
   }
 }
